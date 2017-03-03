@@ -9,43 +9,60 @@ let CinesystemCrawler = require(path.join(__dirname, '../../modules', 'cinesyste
 describe('CinesystemCrawler', () => {
     let Crawler;
 
+    let cinemaRequiredFields = ['cinema', 'city', 'place'];
+    let sessionRequiredFields = ['title', 'censorship', 'special', 'hours'];
+
+    let scheduleByUrl;
+    let scheduleByCityAndPlace;
+
     before(function() {
         Crawler = new CinesystemCrawler();
     });
 
-    it('getScheduleByUrl(): Should return schedule JSON', (done) => {
-        const url = 'http://www.cinesystem.com.br/florianopolis/programacao';
-        Crawler.getScheduleByUrl(url)
+    before(function(done) {
+        Crawler.getScheduleByUrl('http://www.cinesystem.com.br/florianopolis/programacao')
             .then(function(json) {
-                expect(json.city)
-                    .to.be.equal('Florianópolis');
+                scheduleByUrl = json;
+                done();
+            })
+        .catch(done);
+    });
 
-                expect(json.place)
-                    .to.be.equal('Shopping Center Iguatemi');
-
-                expect(json.sessions)
-                    .to.not.be.null;
-
+    before(function(done) {
+        Crawler.getScheduleByCityAndPlace('florianopolis', 'shopping center iguatemi')
+            .then(function(json) {
+                scheduleByCityAndPlace = json;
                 done();
             })
             .catch(done);
     });
 
-    it('getScheduleByCityAndPlace(): Should return schedule JSON', (done) => {
-        Crawler.getScheduleByCityAndPlace('florianopolis', 'shopping center iguatemi')
-            .then(function(json) {
-                expect(json.city)
-                    .to.be.equal('Florianópolis');
+    it('getScheduleByUrl(): Should return schedule JSON', () => {
+        cinemaRequiredFields.forEach((requiredField) => {
+            expect(scheduleByUrl).to.have.property(requiredField);
+            expect(scheduleByUrl[requiredField]).to.have.length.above(1);
+        });
 
-                expect(json.place)
-                    .to.be.equal('Shopping Center Iguatemi');
+        sessionRequiredFields.forEach((requiredField) => {
+            scheduleByUrl.sessions.forEach(function(field) {
+                expect(field).to.have.property(requiredField);
+                expect(field[requiredField]).to.not.be.undefined;
+            });
+        });
+    });
 
-                expect(json.sessions)
-                    .to.not.be.null;
+    it('getScheduleByCityAndPlace(): Should return schedule JSON', () => {
+        cinemaRequiredFields.forEach((requiredField) => {
+            expect(scheduleByCityAndPlace).to.have.property(requiredField);
+            expect(scheduleByCityAndPlace[requiredField]).to.have.length.above(1);
+        });
 
-                done();
-            })
-            .catch(done);
+        sessionRequiredFields.forEach((requiredField) => {
+            scheduleByCityAndPlace.sessions.forEach(function(field) {
+                expect(field).to.have.property(requiredField);
+                expect(field[requiredField]).to.not.be.undefined;
+            });
+        });
     });
 
     it('getCinemasURLs(): Should return a valid URLs cinemas JSON', (done) => {
