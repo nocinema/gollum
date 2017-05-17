@@ -62,11 +62,8 @@ module.exports = class CinesystemCrawler extends MainCrawler {
 
                         $(this).find('.sessoes table tbody tr td strong').remove();
 
-                        let censorship = $(this).find('.info-geral p span').first().remove();
-                        censorship = $(this).find('.info-geral p').first().text();
-
                         let special = $(this).find('.categoria img').attr('src') ? true : false;
-
+                        let censorship = _this._getCensorShip($(this).find('.classificacao').attr('class'));
                         let hours = $(this).find('.sessoes table tbody tr td').eq(1).html().trim();
                         hours = hours.replace(/ /g,'').replace(/,/g, '');
                         hours = hours.match(/.{1,5}/g);
@@ -87,6 +84,27 @@ module.exports = class CinesystemCrawler extends MainCrawler {
 
                 });
         });
+    }
+
+    _getCensorShip(str) {
+        str = str.replace('classificacao ', '');
+
+        switch (str) {
+            case 'doze':
+              return 12;
+            break;
+
+            case 'quatorze':
+              return 14;
+            break;
+
+            case 'dezesseis':
+              return 16;
+            break;
+
+          default:
+              return str;
+        }
     }
 
     getCinemasURLs() {

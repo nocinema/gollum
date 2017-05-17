@@ -61,6 +61,7 @@ describe('CinesystemCrawler', () => {
             scheduleByCityAndPlace.sessions.forEach(function(field) {
                 expect(field).to.have.property(requiredField);
                 expect(field[requiredField]).to.not.be.undefined;
+                expect(field[requiredField]).to.not.be.null;
             });
         });
     });
