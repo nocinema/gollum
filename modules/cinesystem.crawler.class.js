@@ -59,10 +59,12 @@ module.exports = class CinesystemCrawler extends MainCrawler {
                     $(dom).each(function() {
                         let title = $(this).find('div table tbody td h2').text();
                         let type = $(this).find('.sessoes table tbody tr td').eq(0).text().trim();
-                        $(this).find('.sessoes table tbody tr td strong').remove()
-                        let hours = $(this).find('.sessoes table tbody tr td').eq(1).html().trim();
+
+                        $(this).find('.sessoes table tbody tr td strong').remove();
+
                         let special = $(this).find('.categoria img').attr('src') ? true : false;
                         let censorship = _this._getCensorShip($(this).find('.classificacao').attr('class'));
+                        let hours = $(this).find('.sessoes table tbody tr td').eq(1).html().trim();
                         hours = hours.replace(/ /g,'').replace(/,/g, '');
                         hours = hours.match(/.{1,5}/g);
 
