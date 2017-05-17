@@ -8,27 +8,33 @@ let CinesystemCrawler = require(path.join(__dirname, '../../modules', 'cinesyste
 
 describe('CinesystemCrawler', () => {
     let Crawler;
+    let result;
 
-    before(function() {
+    before(function(done) {
         Crawler = new CinesystemCrawler();
-    });
-
-    it('getScheduleByUrl(): Should return schedule JSON', (done) => {
         const url = 'http://www.cinesystem.com.br/florianopolis/programacao';
         Crawler.getScheduleByUrl(url)
             .then(function(json) {
-                expect(json.city)
-                    .to.be.equal('Florianópolis');
-
-                expect(json.place)
-                    .to.be.equal('Shopping Center Iguatemi');
-
-                expect(json.sessions)
-                    .to.not.be.null;
+                result = json;
 
                 done();
             })
             .catch(done);
+    });
+
+    it.only('getScheduleByUrl(): Should return schedule JSON', () => {
+        expect(result.city)
+            .to.be.equal('Florianópolis');
+
+        expect(result.place)
+            .to.be.equal('Shopping Center Iguatemi');
+
+        expect(result.sessions)
+            .to.not.be.null;
+            
+        result.sessions.forEach((session) => {
+            expect(session.censorship).to.not.be.null;
+        });
     });
 
     it('getScheduleByCityAndPlace(): Should return schedule JSON', (done) => {

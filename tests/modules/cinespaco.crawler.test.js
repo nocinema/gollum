@@ -21,7 +21,7 @@ describe('Cinespaço', () => {
             .catch(done);
     });
 
-    it.only('getScheduleByUrl(): Should return schedule JSON', () => {
+    it('getScheduleByUrl(): Should return schedule JSON', () => {
         expect(result.city)
             .to.be.equal('Florianópolis');
 
