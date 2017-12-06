@@ -35,7 +35,7 @@ module.exports = class CinesystemCrawler extends MainCrawler {
             super.getStaticPage(url)
                 .then(function($) {
                     let movies = [];
-                    let dom = '.repeat-filmes li';
+                    let dom = '#programacao_cinema .sala-comum';
                     let cinema = {
                         cinema: 'cinesystem',
                         city: String,
