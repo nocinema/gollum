@@ -1,18 +1,18 @@
 'use strict';
 
-let expect = require('chai').expect;
-let path = require('path');
+const expect = require('chai').expect;
+const path = require('path');
 
 // Import classes for testing
-let Cinespaco = require(path.join(__dirname, '../../modules', 'cinespaco.crawler.class'));
+const Cinespaco = require(path.join(__dirname, '../../modules', 'cinespaco.crawler.class'));
 
-describe('Cinespaço', () => {
+describe.only('Cinespaço', () => {
     let Crawler;
     let result;
 
     before(function(done) {
         Crawler = new Cinespaco();
-        const url = 'http://cinespaco.com.br/cidade/florianopolis';
+        const url = 'http://cinespaco.com.br/cidade/santos';
         Crawler.getScheduleByUrl(url)
             .then(function(json) {
                 result = json;
@@ -23,10 +23,10 @@ describe('Cinespaço', () => {
 
     it('getScheduleByUrl(): Should return schedule JSON', () => {
         expect(result.city)
-            .to.be.equal('Florianópolis');
+            .to.be.equal('Santos');
 
         expect(result.place)
-            .to.be.equal('Beiramar Shopping');
+            .to.be.equal('Miramar Shopping');
 
         expect(result.sessions)
             .to.not.be.null;
@@ -37,13 +37,13 @@ describe('Cinespaço', () => {
     });
 
     it('getScheduleByCityAndPlace(): Should return schedule JSON', (done) => {
-        Crawler.getScheduleByCityAndPlace('florianopolis', 'florianopolis')
+        Crawler.getScheduleByCityAndPlace('santos', 'santos')
             .then(function(json) {
                 expect(json.city)
-                    .to.be.equal('Florianópolis');
+                    .to.be.equal('Santos');
 
                 expect(json.place)
-                    .to.be.equal('Beiramar Shopping');
+                    .to.be.equal('Miramar Shopping');
 
                 expect(json.sessions)
                     .to.not.be.null;
