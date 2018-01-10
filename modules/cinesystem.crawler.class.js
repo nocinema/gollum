@@ -109,38 +109,36 @@ module.exports = class CinesystemCrawler extends MainCrawler {
 
     getCinemasURLs() {
         return new Promise((resolve, reject) => {
-            const url = 'http://www.cinesystem.com.br';
+            const url = 'https://www.cinesystem.com.br';
             super.getStaticPage(url)
                 .then(($) => {
                     let urlsArr = [];
 
-                    $('#topo div div ul li:nth-child(7) div ul li').each((key, link) => {
-                        let temp = $(link).text().match(/[^()]+/g);
-                        if (temp) {
-                            let cinemaObj = {
-                                cinema: 'cinesystem',
-                                place: String,
-                                place_label: String,
-                                city: String,
-                                city_label: String,
-                                url: String
-                            };
+                    $('.dropdown-cinemas li').each((key, link) => {
+                        let text = $(link).text();
+                        let cinemaObj = {
+                            cinema: 'cinesystem',
+                            place: String,
+                            place_label: String,
+                            city: String,
+                            city_label: String,
+                            url: String
+                        };
 
-                            var city = temp[0].trim();
-                            var place = temp[1].trim();
+                        var city = text.split('(')[0].trim();
+                        var place = text.match(/\(([^)]+)\)/)[1];
 
-                            // labels
-                            cinemaObj.city_label = city;
-                            cinemaObj.place_label = place;
+                        // labels
+                        cinemaObj.city_label = city;
+                        cinemaObj.place_label = place;
 
-                            // normalized
-                            cinemaObj.place = super.stringNormalize(place);
-                            cinemaObj.city = super.stringNormalize(city);
+                        // normalized
+                        cinemaObj.place = super.stringNormalize(place);
+                        cinemaObj.city = super.stringNormalize(city);
 
-                            // url
-                            cinemaObj.url = url + $(link).find('a').attr('href');
-                            urlsArr.push(cinemaObj);
-                        }
+                        // url
+                        cinemaObj.url = url + $(link).find('a').attr('href');
+                        urlsArr.push(cinemaObj);
                     });
 
                     super.writeUrlsFile('cinesystem', urlsArr)
