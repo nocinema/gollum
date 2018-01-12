@@ -6,7 +6,7 @@ let path = require('path');
 // Import classes for testing
 let CinesystemCrawler = require(path.join(__dirname, '../../modules', 'cinesystem.crawler.class'));
 
-describe('CinesystemCrawler', () => {
+describe.only('CinesystemCrawler', () => {
     let Crawler;
 
     let cinemaRequiredFields = ['cinema', 'city', 'place'];
@@ -20,8 +20,9 @@ describe('CinesystemCrawler', () => {
     });
 
     before(function(done) {
-        Crawler.getScheduleByUrl('http://www.cinesystem.com.br/florianopolis/programacao')
+        Crawler.getScheduleByUrl('https://www.cinesystem.com.br/cinemas/shopping-iguatemi-florianopolis/437')
             .then(function(json) {
+                console.log(json)
                 scheduleByUrl = json;
                 done();
             })

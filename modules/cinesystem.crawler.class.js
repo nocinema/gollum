@@ -35,7 +35,7 @@ module.exports = class CinesystemCrawler extends MainCrawler {
             super.getStaticPage(url)
                 .then(function($) {
                     let movies = [];
-                    let dom = '#programacao_cinema .sala-comum';
+                    let dom = '#programacao_cinema > div';
                     let cinema = {
                         cinema: 'cinesystem',
                         city: String,
@@ -45,10 +45,9 @@ module.exports = class CinesystemCrawler extends MainCrawler {
                         sessions: []
                     };
 
-                    let city = $('.title-city').text();
-                    let place = city.match(/\(([^)]+)\)/)[1];
-
-                    city = city.replace(/ *\([^)]*\) */g, "");
+                    let text = $('.titulo-internas').text().split('(');
+                    let city = text[0].trim();
+                    let place = text[1].replace(')', '');
 
                     cinema.city = city;
                     cinema.place = place;
@@ -56,17 +55,18 @@ module.exports = class CinesystemCrawler extends MainCrawler {
                     cinema.city_normalized = _this.stringNormalize(city);
                     cinema.place_normalized =  _this.stringNormalize(place);
 
-                    $(dom).each(function() {
-                        let title = $(this).find('div table tbody td h2').text();
-                        let type = $(this).find('.sessoes table tbody tr td').eq(0).text().trim();
+                    $(dom).each((key, div) => {
+                        console.log($(div).text());
+                        //let title = $(this).find('div table tbody td h2').text();
+                        //let type = $(this).find('.sessoes table tbody tr td').eq(0).text().trim();
 
-                        $(this).find('.sessoes table tbody tr td strong').remove();
+                        //$(this).find('.sessoes table tbody tr td strong').remove();
 
-                        let special = $(this).find('.categoria img').attr('src') ? true : false;
-                        let censorship = _this._getCensorShip($(this).find('.classificacao').attr('class'));
-                        let hours = $(this).find('.sessoes table tbody tr td').eq(1).html().trim();
-                        hours = hours.replace(/ /g,'').replace(/,/g, '');
-                        hours = hours.match(/.{1,5}/g);
+                        //let special = $(this).find('.categoria img').attr('src') ? true : false;
+                        //let censorship = _this._getCensorShip($(this).find('.classificacao').attr('class'));
+                        //let hours = $(this).find('.sessoes table tbody tr td').eq(1).html().trim();
+                        //hours = hours.replace(/ /g,'').replace(/,/g, '');
+                        //hours = hours.match(/.{1,5}/g);
 
                         let movie = {
                             title: title,
