@@ -100,14 +100,11 @@ module.exports = class CinespacoCrawler extends MainCrawler {
 
     _getCityCookie(url) {
         let urls = {
-            'http://cinespaco.com.br/cidade/florianopolis': 8,
-            'http://cinespaco.com.br/cidade/joao-pessoa': 5,
             'http://cinespaco.com.br/cidade/novo-hamburgo': 1,
             'http://cinespaco.com.br/cidade/porto-alegre': 11,
             'http://cinespaco.com.br/cidade/rio-de-janeiro': 12,
             'http://cinespaco.com.br/cidade/santos': 13,
-            'http://cinespaco.com.br/cidade/sao-goncalo': 9,
-            'http://cinespaco.com.br/cidade/tubarao': 14
+            'http://cinespaco.com.br/cidade/sao-goncalo': 9
         };
 
         return `sec_cidade=${urls[url]}` || 'URL não mapeada.' ;
