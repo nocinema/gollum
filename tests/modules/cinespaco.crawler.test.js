@@ -6,7 +6,7 @@ const path = require('path');
 // Import classes for testing
 const Cinespaco = require(path.join(__dirname, '../../modules', 'cinespaco.crawler.class'));
 
-describe.only('Cinespaço', () => {
+describe('Cinespaço', () => {
     let Crawler;
     let result;
 

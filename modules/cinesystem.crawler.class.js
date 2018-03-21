@@ -2,7 +2,6 @@
 
 // Require node_modules dependencies
 let path = require('path');
-let cheerio = require('cheerio');
 
 // Require other classes, files or configs
 let MainCrawler = require(path.join(__dirname, '../modules', 'main.crawler.class'));
@@ -32,10 +31,10 @@ module.exports = class CinesystemCrawler extends MainCrawler {
     _mineSite(url) {
         let _this = this;
         return new Promise((resolve, reject) => {
-            super.getStaticPage(url)
+            super.getDynamicPage(url)
                 .then(function($) {
                     let movies = [];
-                    let dom = '.repeat-filmes li';
+                    let dom = '#programacao_cinema > div';
                     let cinema = {
                         cinema: 'cinesystem',
                         city: String,
@@ -45,10 +44,9 @@ module.exports = class CinesystemCrawler extends MainCrawler {
                         sessions: []
                     };
 
-                    let city = $('.title-city').text();
-                    let place = city.match(/\(([^)]+)\)/)[1];
-
-                    city = city.replace(/ *\([^)]*\) */g, "");
+                    let text = $('.titulo-internas').text().split('(');
+                    let city = text[0].trim();
+                    let place = text[1].replace(')', '');
 
                     cinema.city = city;
                     cinema.place = place;
@@ -56,17 +54,18 @@ module.exports = class CinesystemCrawler extends MainCrawler {
                     cinema.city_normalized = _this.stringNormalize(city);
                     cinema.place_normalized =  _this.stringNormalize(place);
 
-                    $(dom).each(function() {
-                        let title = $(this).find('div table tbody td h2').text();
-                        let type = $(this).find('.sessoes table tbody tr td').eq(0).text().trim();
+                    $(dom).each((key, div) => {
+                        console.log($(div).text());
+                        //let title = $(this).find('div table tbody td h2').text();
+                        //let type = $(this).find('.sessoes table tbody tr td').eq(0).text().trim();
 
-                        $(this).find('.sessoes table tbody tr td strong').remove();
+                        //$(this).find('.sessoes table tbody tr td strong').remove();
 
-                        let special = $(this).find('.categoria img').attr('src') ? true : false;
-                        let censorship = _this._getCensorShip($(this).find('.classificacao').attr('class'));
-                        let hours = $(this).find('.sessoes table tbody tr td').eq(1).html().trim();
-                        hours = hours.replace(/ /g,'').replace(/,/g, '');
-                        hours = hours.match(/.{1,5}/g);
+                        //let special = $(this).find('.categoria img').attr('src') ? true : false;
+                        //let censorship = _this._getCensorShip($(this).find('.classificacao').attr('class'));
+                        //let hours = $(this).find('.sessoes table tbody tr td').eq(1).html().trim();
+                        //hours = hours.replace(/ /g,'').replace(/,/g, '');
+                        //hours = hours.match(/.{1,5}/g);
 
                         let movie = {
                             title: title,
@@ -109,38 +108,36 @@ module.exports = class CinesystemCrawler extends MainCrawler {
 
     getCinemasURLs() {
         return new Promise((resolve, reject) => {
-            const url = 'http://www.cinesystem.com.br';
+            const url = 'https://www.cinesystem.com.br';
             super.getStaticPage(url)
                 .then(($) => {
                     let urlsArr = [];
 
-                    $('#topo div div ul li:nth-child(7) div ul li').each((key, link) => {
-                        let temp = $(link).text().match(/[^()]+/g);
-                        if (temp) {
-                            let cinemaObj = {
-                                cinema: 'cinesystem',
-                                place: String,
-                                place_label: String,
-                                city: String,
-                                city_label: String,
-                                url: String
-                            };
+                    $('.dropdown-cinemas li').each((key, link) => {
+                        let text = $(link).text();
+                        let cinemaObj = {
+                            cinema: 'cinesystem',
+                            place: String,
+                            place_label: String,
+                            city: String,
+                            city_label: String,
+                            url: String
+                        };
 
-                            var city = temp[0].trim();
-                            var place = temp[1].trim();
+                        var city = text.split('(')[0].trim();
+                        var place = text.match(/\(([^)]+)\)/)[1];
 
-                            // labels
-                            cinemaObj.city_label = city;
-                            cinemaObj.place_label = place;
+                        // labels
+                        cinemaObj.city_label = city;
+                        cinemaObj.place_label = place;
 
-                            // normalized
-                            cinemaObj.place = super.stringNormalize(place);
-                            cinemaObj.city = super.stringNormalize(city);
+                        // normalized
+                        cinemaObj.place = super.stringNormalize(place);
+                        cinemaObj.city = super.stringNormalize(city);
 
-                            // url
-                            cinemaObj.url = url + $(link).find('a').attr('href');
-                            urlsArr.push(cinemaObj);
-                        }
+                        // url
+                        cinemaObj.url = url + $(link).find('a').attr('href');
+                        urlsArr.push(cinemaObj);
                     });
 
                     super.writeUrlsFile('cinesystem', urlsArr)
