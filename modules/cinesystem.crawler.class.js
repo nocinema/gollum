@@ -2,7 +2,6 @@
 
 // Require node_modules dependencies
 let path = require('path');
-let cheerio = require('cheerio');
 
 // Require other classes, files or configs
 let MainCrawler = require(path.join(__dirname, '../modules', 'main.crawler.class'));
@@ -32,7 +31,7 @@ module.exports = class CinesystemCrawler extends MainCrawler {
     _mineSite(url) {
         let _this = this;
         return new Promise((resolve, reject) => {
-            super.getStaticPage(url)
+            super.getDynamicPage(url)
                 .then(function($) {
                     let movies = [];
                     let dom = '#programacao_cinema > div';
