@@ -4,8 +4,8 @@
   "description": "Gollum is specialized crawler in cinemas sites.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive tests/ --timeout 6000",
-    "watch:test": "mocha --recursive tests/ --timeout 6000 -w"
+    "test": "mocha --recursive tests/ --timeout 100000",
+    "watch:test": "mocha --recursive tests/ --timeout 100000 -w"
   },
   "repository": {
     "type": "git",
@@ -33,6 +33,7 @@
   "dependencies": {
     "cheerio": "^0.20.0",
     "jsdom": "^9.4.1",
+    "kapti": "file:../../fernandoguedes/kapti",
     "lodash": "^4.13.1",
     "moment": "^2.13.0",
     "promise-sequential": "^1.1.1",
