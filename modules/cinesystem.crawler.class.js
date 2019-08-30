@@ -7,7 +7,6 @@ let path = require('path');
 let MainCrawler = require(path.join(__dirname, '../modules', 'main.crawler.class'));
 
 module.exports = class CinesystemCrawler extends MainCrawler {
-
     getScheduleByUrl(url) {
         return new Promise((resolve, reject) => {
             this._mineSite(url)
@@ -31,10 +30,10 @@ module.exports = class CinesystemCrawler extends MainCrawler {
     _mineSite(url) {
         let _this = this;
         return new Promise((resolve, reject) => {
-            super.getDynamicPage(url)
+            let dom = '#programacao_cinema > .row';
+            super.getDynamicPageByPuppeteer(url, dom)
                 .then(function($) {
                     let movies = [];
-                    let dom = '#programacao_cinema > div';
                     let cinema = {
                         cinema: 'cinesystem',
                         city: String,
@@ -54,56 +53,28 @@ module.exports = class CinesystemCrawler extends MainCrawler {
                     cinema.city_normalized = _this.stringNormalize(city);
                     cinema.place_normalized =  _this.stringNormalize(place);
 
-                    $(dom).each((key, div) => {
-                        console.log($(div).text());
-                        //let title = $(this).find('div table tbody td h2').text();
-                        //let type = $(this).find('.sessoes table tbody tr td').eq(0).text().trim();
+                    cinema.sessions = $(dom).map((i, room) => {
+                        let titleDOM = $(room).find('.nome-cinema').text();
+                        let title = titleDOM.slice(0, titleDOM.length - 2)
+                        let censorship = titleDOM.slice(-2)
+                        let roomsDOM = $(room).find('.painel-salas')
+                        let type = $(roomsDOM).find('.painel-salas-info span').eq(0).text()
+                        let hours = $(roomsDOM).find('.list-inline .list-inline-item strong').map((i, el) => $(el).text()).get()
+                        let special = $(roomsDOM).find('.painel-salas-info span').eq(1).text() ? true : false
 
-                        //$(this).find('.sessoes table tbody tr td strong').remove();
-
-                        //let special = $(this).find('.categoria img').attr('src') ? true : false;
-                        //let censorship = _this._getCensorShip($(this).find('.classificacao').attr('class'));
-                        //let hours = $(this).find('.sessoes table tbody tr td').eq(1).html().trim();
-                        //hours = hours.replace(/ /g,'').replace(/,/g, '');
-                        //hours = hours.match(/.{1,5}/g);
-
-                        let movie = {
+                        return {
                             title: title,
                             type: type,
                             censorship: censorship,
                             special: special,
                             hours: hours
-                        };
+                        }
+                    }).get()
 
-                        movies.push(movie);
-                    });
-
-                    cinema.sessions = movies;
-                    return resolve(cinema);
+                    return resolve(cinema)
 
                 });
         });
-    }
-
-    _getCensorShip(str) {
-        str = str.replace('classificacao ', '');
-
-        switch (str) {
-            case 'doze':
-              return 12;
-            break;
-
-            case 'quatorze':
-              return 14;
-            break;
-
-            case 'dezesseis':
-              return 16;
-            break;
-
-          default:
-              return str;
-        }
     }
 
     getCinemasURLs() {
