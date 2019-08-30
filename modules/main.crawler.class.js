@@ -1,15 +1,15 @@
 'use strict';
 
 // Require node_modules dependencies
-const path = require('path');
-const rp = require('request-promise');
-const $ = require('cheerio');
-const jsdom = require('jsdom');
-const fs = require('fs');
-const _ = require('lodash');
+const path = require('path')
+const rp = require('request-promise')
+const $ = require('cheerio')
+const jsdom = require('jsdom')
+const fs = require('fs')
+const _ = require('lodash')
+const kapti = require('kapti')
 
 module.exports = class MainCrawler {
-
     getStaticPage(url, headers) {
         let options = {
             uri: url,
@@ -50,6 +50,10 @@ module.exports = class MainCrawler {
                 }
             });
         });
+    }
+
+    getDynamicPageByPuppeteer(url, waitSelector) {
+        return kapti.getDynamicPage(url, waitSelector)
     }
 
     stringNormalize(str) {
